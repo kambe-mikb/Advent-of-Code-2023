@@ -83,15 +83,15 @@ def getInput(infile: str) -> T.Generator:
     return (v.rstrip("\n") for v in open(infile))
 
 
-input = [
-    "two1nine",
-    "eightwothree",
-    "abcone2threexyz",
-    "xtwone3four",
-    "4nineeightseven2",
-    "zoneight234",
-    "7pqrstsixteen",
-    ]
+# input = [
+#     "two1nine",
+#     "eightwothree",
+#     "abcone2threexyz",
+#     "xtwone3four",
+#     "4nineeightseven2",
+#     "zoneight234",
+#     "7pqrstsixteen",
+#     ]
 
 
 words = [
@@ -105,7 +105,8 @@ words = [
     "seven",
     "eight",
     "nine",
-    ]
+]
+
 
 def word2digit(matchobj: Match) -> str:
     return f"{words.index(matchobj.group(0))}"
@@ -113,14 +114,18 @@ def word2digit(matchobj: Match) -> str:
 
 if __name__ == "__main__":
     total = 0
-    word_regex = compile(f"({')|('.join(words)})")
-    digit_regex = compile(r"\D")
-    # input = getInput("Input01.txt")
+    word_regex = compile(rf"(?=(({')|('.join(words)})|\d))")
+    input = getInput("Input01.txt")
     for line in input:
-        newline = word_regex.sub(word2digit, line)
-        digits = digit_regex.sub("", newline)
-        if len(digits):
-            print(f"{line} -> {newline} -> {digits[0]}{digits[-1]}")
-            total += int(digits[0] + digits[-1])
+        digits = [
+            (
+                words.index(matchobj.group(1))
+                if (matchobj.group(1) in words)
+                else int(matchobj.group(1))
+            )
+            for matchobj in word_regex.finditer(line)
+        ]
+        if digits:
+            print(f"{line} -> {digits} -> {digits[0]}{digits[-1]}")
+            total += digits[0] * 10 + digits[-1]
     print(total)
-        
