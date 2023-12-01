@@ -69,6 +69,8 @@ In this example, the calibration values are 29, 83, 13, 24, 42, 14, and 76.
 Adding these together produces 281.
 
 What is the sum of all of the calibration values?
+
+Your puzzle answer was 55701.
 """
 
 from re import compile, Match
@@ -106,10 +108,6 @@ words = [
     "eight",
     "nine",
 ]
-
-
-def word2digit(matchobj: Match) -> str:
-    return f"{words.index(matchobj.group(0))}"
 
 
 if __name__ == "__main__":
