@@ -177,7 +177,6 @@ def part_2(input: T.Iterable) -> int:
     for row, star_line in enumerate(schematic):
         for star in star_regex.finditer(star_line):
             column = star.start()
-            adj = []
             adj = [
                 int(pn[0])
                 for pn_row, pn_line in enumerate(
