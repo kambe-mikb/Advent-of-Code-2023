@@ -178,21 +178,15 @@ def part_2(input: T.Iterable) -> int:
         for star in star_regex.finditer(star_line):
             column = star.start()
             adj = []
-            print(f"Star in row {row} column {column}: ")
-            for pn_row, pn_line in enumerate(
-                schematic[(row - 1) : (row + 2)], row - 1
-            ):
-                for pn in pn_regex.finditer(pn_line):
-                    start = pn.start()
-                    end = pn.end() - 1
-                    if end >= (column - 1) and start <= column + 1:
-                        print(
-                            f"Part {pn[0]} in row {pn_row} between {start} "
-                            f"and {end}"
-                        )
-                        adj.append(int(pn[0]))
+            adj = [
+                int(pn[0])
+                for pn_row, pn_line in enumerate(
+                    schematic[(row - 1) : (row + 2)], row - 1
+                )
+                for pn in pn_regex.finditer(pn_line)
+                if pn.end() >= column and pn.start() <= column + 1
+            ]
             for i, j in pairwise(adj):
-                print(f"Product pair: {i} * {j}")
                 total += i * j
 
     return total
