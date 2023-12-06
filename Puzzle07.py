@@ -104,9 +104,7 @@ def get_numbers(input: T.Iterable) -> list[tuple[str, tuple[str], tuple[str]]]:
 def part_1(input: T.Iterable) -> int:
     total = 0
     for card in get_numbers(input):
-        winners = [
-            winner for winner in card.winners if winner in card.numbers
-        ]
+        winners = [winner for winner in card.winners if winner in card.numbers]
         total += pow(2, len(winners) - 1) if winners else 0
     return total
 
