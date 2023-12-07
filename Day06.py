@@ -139,7 +139,10 @@ line_regex = compile(r"\d+")
 
 
 def getMetrics(input: T.Iterable) -> list[tuple[int, int]]:
-    data = [[int(value[0]) for value in line_regex.finditer(line)] for line in input]
+    data = [
+        [int(value[0]) for value in line_regex.finditer(line)]
+        for line in input
+    ]
     return [(time, distance) for time, distance in zip(*data)]
 
 
