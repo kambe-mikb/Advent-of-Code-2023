@@ -180,6 +180,8 @@ temperature 45, humidity 46, and location 46. So, the lowest location number is
 Consider all of the initial seed numbers listed in the ranges on the first line
 of the almanac. What is the lowest location number that corresponds to any of
 the initial seed numbers?
+
+Your puzzle answer was 20358599.
 """
 
 from itertools import chain
@@ -291,10 +293,10 @@ def part_1(input: T.Iterable) -> int:
 
 def part_2(input: T.Iterable) -> int:
     almanac = get_almanac(input)
-    locations = []
+    minimum_location = None
     seeds = almanac["seeds"]
     for seed in chain.from_iterable(
-        [range(s, s + r) for s, r in zip(seeds[::2], seeds[1::2])]
+        (range(s, s + r) for s, r in zip(seeds[::2], seeds[1::2]))
     ):
         num = seed
         for crossref in [
@@ -307,8 +309,10 @@ def part_2(input: T.Iterable) -> int:
             "humidity-to-location",
         ]:
             num = map_number(almanac[crossref], num)
-        locations.append(num)
-    return min(locations)
+        minimum_location = (
+            min([minimum_location, num]) if minimum_location else num
+        )
+    return minimum_location
 
 
 if __name__ == "__main__":
