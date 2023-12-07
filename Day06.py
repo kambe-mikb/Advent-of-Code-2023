@@ -87,7 +87,34 @@ beat the record in each race; in this example, if you multiply these values
 together, you get 288 (4 * 8 * 9).
 
 Determine the number of ways you could beat the record in each race. What do
-you get if you multiply these numbers together? """
+you get if you multiply these numbers together?
+
+Your puzzle answer was 1413720.
+
+Part Two
+--------
+As the race is about to start, you realize the piece of paper with race times
+and record distances you got earlier actually just has very bad kerning.
+There's really only one race - ignore the spaces between the numbers on each
+line.
+
+So, the example from before:
+
+Time:      7  15   30
+Distance:  9  40  200
+
+...now instead means this:
+
+Time:      71530
+Distance:  940200
+
+Now, you have to figure out how many ways there are to win this single race.
+In this example, the race lasts for 71530 milliseconds and the record distance
+you need to beat is 940200 millimeters. You could hold the button anywhere from
+14 to 71516 milliseconds and beat the record, a total of 71503 ways!
+
+How many ways can you beat the record in this one much longer race?
+"""
 from itertools import filterfalse
 from math import prod
 from re import compile
@@ -136,8 +163,18 @@ def part_1(input: T.Iterable) -> int:
 
 
 def part_2(input: T.Iterable) -> int:
-    total = 0
-    return total
+    [time, distance] = [
+        int("".join([match_obj[0] for match_obj in line_regex.finditer(line)]))
+        for line in input
+    ]
+    return len(
+        [
+            travel
+            for travel in filterfalse(
+                lambda wait: (wait * (time - wait)) <= distance, range(time)
+            )
+        ]
+    )
 
 
 if __name__ == "__main__":
@@ -145,7 +182,7 @@ if __name__ == "__main__":
     print(f"Result of Part 1 (test) = {part_1(input)}")
     print()
     print(f"Result of Part 1 (data) = {part_1(getInput(puzzle_input))}")
-    # print()
-    # print(f"Result of Part 2 (test) = {part_2(input)}")
-    # print()
-    # print(f"Result of Part 2 (data) = {part_2(getInput(puzzle_input))}")
+    print()
+    print(f"Result of Part 2 (test) = {part_2(input)}")
+    print()
+    print(f"Result of Part 2 (data) = {part_2(getInput(puzzle_input))}")
