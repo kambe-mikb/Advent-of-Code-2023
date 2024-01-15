@@ -110,6 +110,7 @@ take before you're only on nodes that end with Z?
 
 from collections import namedtuple
 from itertools import cycle, islice
+from math import lcm
 import typing as T
 
 
@@ -145,7 +146,7 @@ input_2 = [
     "22C = (22Z, 22Z)",
     "22Z = (22B, 22B)",
     "XXX = (XXX, XXX)",
-    ]
+]
 
 
 Node = namedtuple("Node", ("L", "R"))
@@ -160,27 +161,35 @@ def buildNetwork(input: T.Iterator) -> tuple[str, dict[str, Node]]:
         network[node] = Node(*branches)
     return instructions, network
 
-                                             
+
+def follow_path(
+    instructions: str, network: dict, start: str, predicate: T.Callable
+) -> int:
+    curNode = start
+    for total, instruction in enumerate(cycle(instructions)):
+        if predicate(curNode):
+            break
+        curNode = getattr(network[curNode], instruction)
+
+    return total
+
+
 def part_1(input: T.Iterator) -> int:
     instructions, network = buildNetwork(input)
-    curNode = "AAA"
-    for total, instruction in enumerate(cycle(instructions)):
-        if curNode == "ZZZ":
-            break
-        curNode =  getattr(network[curNode], instruction)
-        
-    return total
+    return follow_path(instructions, network, "AAA", lambda x: x == "ZZZ")
 
 
 def part_2(input: T.Iterable) -> int:
     instructions, network = buildNetwork(input)
-    stepNodes = [n for n in network.keys() if n.endswith("A")]
-    for total, instruction in enumerate(cycle(instructions)):
-        print(f"Step: {total} => {stepNodes}")
-        if all([n.endswith("Z") for n in stepNodes]):
-            break
-        stepNodes = [getattr(network[n], instruction) for n in stepNodes]
-    return total
+    totals = []
+    for start in (s for s in network.keys() if s.endswith("A")):
+        curNode = start
+        totals.append(
+            follow_path(
+                instructions, network, start, lambda x: x.endswith("Z")
+            )
+        )
+    return lcm(*totals)
 
 
 if __name__ == "__main__":
