@@ -109,7 +109,7 @@ take before you're only on nodes that end with Z?
 """
 
 from collections import namedtuple
-from itertools import cycle, islice
+from itertools import cycle, islice, takewhile
 from math import lcm
 import typing as T
 
@@ -166,9 +166,10 @@ def follow_path(
     instructions: str, network: dict, start: str, predicate: T.Callable
 ) -> int:
     curNode = start
-    for total, instruction in enumerate(cycle(instructions)):
-        if predicate(curNode):
-            break
+    for total, instruction in enumerate(
+        takewhile(lambda _: not predicate(curNode), cycle(instructions)),
+        start=1,
+    ):
         curNode = getattr(network[curNode], instruction)
 
     return total
@@ -183,7 +184,6 @@ def part_2(input: T.Iterable) -> int:
     instructions, network = buildNetwork(input)
     totals = []
     for start in (s for s in network.keys() if s.endswith("A")):
-        curNode = start
         totals.append(
             follow_path(
                 instructions, network, start, lambda x: x.endswith("Z")
@@ -194,6 +194,7 @@ def part_2(input: T.Iterable) -> int:
 
 if __name__ == "__main__":
     puzzle_input = "Input08.txt"
+    print(f"{__file__}, using {puzzle_input}")
     print(f"Result of Part 1 (test) = {part_1(iter(input_1))}")
     print()
     print(f"Result of Part 1 (data) = {part_1(getInput(puzzle_input))}")
